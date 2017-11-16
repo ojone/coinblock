@@ -1,1 +1,0 @@
-ALTER TABLE `events` ADD `event_index` INT NULL DEFAULT NULL AFTER `game_id`;

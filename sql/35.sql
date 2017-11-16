@@ -1,1 +1,0 @@
-ALTER TABLE `transaction_game_ios` ADD `original_io_id` INT NULL DEFAULT NULL AFTER `io_id`;
