@@ -2,7 +2,7 @@ version: '3'
 services:
   ### PHP-FPM Container
   php-fpm:
-    build: ./build/php-fpm
+    build: ./deploy/php-fpm
     volumes:
       - ./src:/var/www
     expose:
@@ -13,7 +13,7 @@ services:
   
   ### NGINX Container
   nginx:
-    build: ./build/nginx
+    build: ./deploy/nginx
     volumes:
       - ./logs/nginx/:/var/log/nginx
       - ./src:/var/www
@@ -25,7 +25,7 @@ services:
 
   ### MySQL Container
   mysql:
-    build: ./build/mysql
+    build: ./deploy/mysql
     volumes:
       - /var/lib/mysql
     expose:
@@ -40,16 +40,16 @@ services:
   #redis:
     #image: redis
     #expose:
-        - "6379"
+        #- "6379"
 
   ### Application Code Container
   application:
-    build: ./build/application
+    build: ./deploy/application
 
 
   ### Workspace Utilities Container
   workspace:
-    build: ./build/workspace
+    build: ./deploy/workspace
     volumes:
       - ./src:/var/www
     links:
