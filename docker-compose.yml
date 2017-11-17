@@ -1,61 +1,36 @@
-version: '3'
+version: '2'
+
 services:
-  ### PHP-FPM Container
-  php-fpm:
-    build: ./deploy/php-fpm
-    volumes:
-      - ./src:/var/www
-    expose:
-      - "9000"
-    links:
-      - mysql
-      #- redis
-  
-  ### NGINX Container
-  nginx:
-    build: ./deploy/nginx
-    volumes:
-      - ./logs/nginx/:/var/log/nginx
-      - ./src:/var/www
-    ports:
-      - "8080:80"
-      - "443:443"
-    links:
-      - php-fpm
 
-  ### MySQL Container
-  mysql:
-    build: ./deploy/mysql
-    volumes:
-      - /var/lib/mysql
-    expose:
-      - "3306"
-    environment:
-      MYSQL_DATABASE: ${DB_NAME}
-      MYSQL_USER: ${DB_USER}
-      MYSQL_PASSWORD: ${DB_PASS}
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASS}
-
-  ### Redis Container
-  #redis:
-    #image: redis
-    #expose:
-        #- "6379"
-
-  ### Application Code Container
-  application:
-    build: ./deploy/application
-
-
-  ### Workspace Utilities Container
-  workspace:
-    build: ./deploy/workspace
-    volumes:
-      - ./src:/var/www
-    links:
-      - mysql
-      #- redis
-    tty: true
-
-volumes:
-  src:
+    web:
+        build:
+            context: ./
+            dockerfile: deploy/web.dockerfile
+        volumes:
+            - ./:/var/www
+        ports:
+            - "8080:80"
+        links:
+            - app
+        
+    app:
+        build:
+            context: ./
+            dockerfile: deploy/app.dockerfile
+        volumes:
+            - ./:/var/www
+        links:
+            - database
+        environment:
+            - "DB_PORT=3306"
+            - "DB_HOST=database"
+            
+    database:
+        image: mysql:5.7
+        environment:
+            - "MYSQL_ROOT_PASSWORD=secret"
+            - "MYSQL_DATABASE=stakemoney_db"
+            - "MYSQL_USER=stakemoney"
+            - "MYSQL_PASSWORD=secret"
+        ports:
+            - "33061:3306"
